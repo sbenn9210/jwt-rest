@@ -4,7 +4,7 @@ const execSync = require('child_process').execSync;
 const runSequelizeCommand = async command => {
   try {
     execSync(
-      (__dirname = '/../../node_modules/.bin/sequilize' + command + ' --debug'),
+      (__dirname + '/../../node_modules/.bin/sequelize ' +  command + ' --debug'),
       {
         stdio: 'inherit',
       }
