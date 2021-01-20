@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-app.post('/', async (req, res) => {
+app.post('/register', async (req, res) => {
   const { name, email, password } = req.body;
   try {
     let user = await db.User.findOne({ where: { email: email } });
