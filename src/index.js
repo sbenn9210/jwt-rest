@@ -11,18 +11,28 @@ app.use(helmet());
 
 app.use(express.json({ extended: false }));
 
-const saltRounds = 10;
-
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-app.post('/register', (req, res) => {
-  bcrypt.hash(req.body.password, saltRounds, function (err, hash) {
-    req.body.password = hash
-    db.User.create(req.body).then(newUser => res.send(newUser));
-  });
-  
+app.post('/', async (req, res) => {
+  const { name, email, password } = req.body;
+  try {
+    let user = await db.User.findOne({ where: { email: email } });
+    if (user) {
+      return res.status(400).json({ msg: 'This user already exists' });
+    } else {
+      let user = await db.User.create({
+        name,
+        email,
+        password: await bcrypt.hash(password, 10),
+      });
+      res.json(user);
+    }
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
 });
 
 app.listen(port, () => {
