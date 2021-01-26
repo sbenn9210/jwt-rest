@@ -18,18 +18,13 @@ app.get("/", (req, res) => {
 });
 
 app.post("/register", async (req, res) => {
-  const user = await User.create({name:req.body.name, email:req.body.email, password:req.body.password, hash: hash});
-
-  bcrypt.genSalt().then(salt => {
-    bcrypt.hash("password", salt).then(hash =>{
-      console.log(hash);
-    });
-  })
-
+  const salt = await bcrypt.genSalt();
+  const hashedPassword = await bcrypt.hash(req.body.password,salt);
+  const user = await User.create({name:req.body.name, email:req.body.email, password:hashedPassword});
   console.log(req.body.name)
   res.json(user);
- 
 });
+
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
